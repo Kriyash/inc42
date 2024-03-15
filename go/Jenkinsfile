@@ -9,15 +9,15 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.build('hello-world:latest')
+                    docker.build('yash1133/inc42:go-1')
                 }
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://hub.docker.com/repository/docker/yash1133/inc42/general', 'dockerhub_credentials') {
-                        docker.image('hello-world:latest').push('latest')
+                    docker.withCredentials([usernameColonPassword(credentialsId: '7e62c798-7ac1-46a1-ba99-d5f2272b44c7', variable: 'docker')]) {
+                        docker.image('yash1133/inc42:go-1').push('latest')
                     }
                 }
             }
@@ -26,15 +26,10 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'dockerhub_credentials') {
-                        docker.image('hello-world:latest').run('-p 9090:8080 --name hello-world-container')
+                        docker.image('yash1133/inc42:go-1').run('-p 9090:8080 --name hello-world-container')
                     }
                 }
             }
         }
-    }
-    
-    environment {
-        DOCKER_HUB_USERNAME = credentials('yash1133')
-        DOCKER_HUB_PASSWORD = credentials('Docker@123')
-    }
+    }    
 }
